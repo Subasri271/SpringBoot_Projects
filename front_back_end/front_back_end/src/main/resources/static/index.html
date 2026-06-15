@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Scientific Calculator</title>
+</head>
+<body>
+<h2>Scientific Calculator</h2>
+
+<input type="number" id="n1" placeholder="Enter the first number"/>
+<input type="number" id="n2" placeholder="Enter the second number (if needed)"/>
+<br><br>
+<button onclick="calculate('add')">ADD</button>
+<button onclick="calculate('sub')">SUBTRACT</button>
+<button onclick="calculate('quo')">DIVISION</button>
+<button onclick="calculate('power')">POWER</button>
+<br><br>
+<button onclick="calculateOne('sqrt')">SQRT</button>
+<button onclick="calculateOne('log')">LOG</button>
+<button onclick="calculateOne('sin')">SIN</button>
+<button onclick="calculateOne('cos')">COS</button>
+<button onclick="calculateOne('tan')">TAN</button>
+<br><br>
+
+<p id="res"></p>
+<hr/>
+<h2>Spiral Matrix</h2>
+
+<input type="number" id="matrixSize" placeholder="Enter matrix size (n)"/>
+<br><br>
+<button onclick="generateInputs()">GENERATE INPUTS</button>
+<br><br>
+<div id="matrixInputs"></div>
+<br>
+<button onclick="getSpiral()">GET SPIRAL ORDER</button>
+<br><br>
+<p id="spiralRes"></p>
+
+<script>
+    async function calculate(op) {
+        const a = document.getElementById("n1").value;
+        const b = document.getElementById("n2").value;
+        const response = await fetch(`http://localhost:8080/calc/${op}/${a}/${b}`);
+        const text = await response.text();
+        document.getElementById("res").innerText = text;
+    }
+
+    async function calculateOne(op) {
+        const a = document.getElementById("n1").value;
+        const response = await fetch(`http://localhost:8080/calc/${op}/${a}`);
+        const text = await response.text();
+        document.getElementById("res").innerText = text;
+    }
+    function generateInputs() {
+        const n = document.getElementById("matrixSize").value;
+        let html = '';
+        for (let i = 0; i < n; i++) {
+            for (let j = 0; j < n; j++) {
+                html += `<input type="number" id="m${i}${j}" style="width:50px; margin:3px; text-align:center;" placeholder="${i},${j}"/>`;
+            }
+            html += '<br/>';
+        }
+        document.getElementById("matrixInputs").innerHTML = html;
+    }
+
+    async function getSpiral() {
+        const n = document.getElementById("matrixSize").value;
+        let values = [];
+        for (let i = 0; i < n; i++) {
+            for (let j = 0; j < n; j++) {
+                values.push(document.getElementById(`m${i}${j}`).value);
+            }
+        }
+        const joined = values.join(",");
+        const response = await fetch(`http://localhost:8080/calc/spiral/${n}/${joined}`);
+        const text = await response.text();
+        document.getElementById("spiralRes").innerText = text;
+    }
+</script>
+</body>
+</html>

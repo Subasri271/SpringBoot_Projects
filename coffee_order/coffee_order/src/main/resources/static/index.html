@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Coffee Order</title>
+</head>
+<body>
+<center>
+    <h1>☕ COFFEE ORDER</h1>
+
+    <form id="coffeeForm">
+        Coffee Type: <input id="coffeeType" placeholder="Ex: Latte, Espresso"/>
+        <button type="submit">Order</button>
+    </form>
+</center>
+
+<h2>Orders</h2>
+<ul id="orderList"></ul>
+
+<script>
+    const form = document.getElementById("coffeeForm");
+    const list = document.getElementById("orderList");
+
+    fetch("/coffee")
+        .then(res => res.json())
+        .then(data => data.forEach(order => addOrder(order)));
+
+    form.addEventListener("submit", e => {
+        e.preventDefault();
+        const type = document.getElementById("coffeeType").value;
+
+        fetch("/coffee/" + type, {
+            method: "POST"
+        })
+            .then(res => res.text())
+            .then(msg => {
+                addOrder(type);
+                form.reset();
+            });
+    });
+
+    function addOrder(order) {
+        const li = document.createElement("li");
+        li.textContent =  order;
+        list.appendChild(li);
+    }
+</script>
+</body>
+</html>
